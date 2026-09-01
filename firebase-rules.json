@@ -1,0 +1,27 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "jard": {
+      ".read": true,
+      ".write": true,
+      "data": {
+        ".validate": "newData.hasChildren(['rev']) && newData.child('rev').isNumber()"
+      },
+      "notifs": {
+        "$id": {
+          ".validate": "newData.hasChildren(['ts']) && newData.child('ts').isNumber()"
+        }
+      },
+      "sessions": {
+        "$user": {
+          ".validate": "newData.hasChildren(['ts']) && newData.child('ts').isNumber()"
+        }
+      },
+      "meta": {
+        ".read": true,
+        ".write": true
+      }
+    }
+  }
+}
