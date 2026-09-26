@@ -1,0 +1,57 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "jard2": {
+      "users": {
+        ".read": "auth != null",
+        "$uid": {
+          ".write": "auth != null && ( $uid === auth.uid || root.child('jard2/users').child(auth.uid).child('role').val() === 'admin' )",
+          ".validate": "newData.hasChildren(['name','role','active'])"
+        }
+      },
+
+      "warehouses": {
+        ".read": "auth != null",
+        ".write": "auth != null && root.child('jard2/users').child(auth.uid).child('role').val() === 'admin'"
+      },
+
+      "items": {
+        ".read": "auth != null && root.child('jard2/users').child(auth.uid).child('active').val() === true",
+        ".write": "auth != null && root.child('jard2/users').child(auth.uid).child('role').val() === 'admin'",
+        "$code": {
+          ".write": "auth != null && root.child('jard2/users').child(auth.uid).child('active').val() === true",
+          "warehouses": {
+            "$wh": {
+              "actual": { ".validate": "newData.isNumber() && newData.val() >= 0" },
+              "system": { ".validate": "newData.isNumber() && newData.val() >= 0" },
+              "counts": {
+                "$uid": {
+                  ".write": "auth != null && $uid === auth.uid",
+                  ".validate": "newData.isNumber() && newData.val() >= 0"
+                }
+              }
+            }
+          }
+        }
+      },
+
+      "auditLog": {
+        ".read": "auth != null && root.child('jard2/users').child(auth.uid).child('role').val() === 'admin'",
+        "$id": {
+          ".write": "auth != null && !data.exists() && newData.child('uid').val() === auth.uid",
+          ".validate": "newData.hasChildren(['uid','name','action','ts'])"
+        }
+      },
+
+      "sessions": {
+        ".read": "auth != null && root.child('jard2/users').child(auth.uid).child('role').val() === 'admin'",
+        "$uid": {
+          ".read": "auth != null && $uid === auth.uid",
+          ".write": "auth != null && $uid === auth.uid",
+          ".validate": "newData.val() == null || newData.hasChildren(['ts'])"
+        }
+      }
+    }
+  }
+}
